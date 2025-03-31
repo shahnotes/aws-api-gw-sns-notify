@@ -26,11 +26,10 @@ resource "aws_api_gateway_integration" "sns_integration" {
   http_method             = aws_api_gateway_method.sns_post.http_method
   type                    = "AWS"
   integration_http_method = "POST"
-  uri                     = "arn:aws:apigateway:${var.region}:sns:path//"
+  uri                     = "arn:aws:apigateway:${var.region}:sns:action/Publish"
 
-  request_parameters = {
-    "integration.request.querystring.Message"  = "method.request.querystring.Message"
-    "integration.request.querystring.TopicArn" = "method.request.querystring.TopicArn"
+  request_templates = {
+    "application/x-www-form-urlencoded" = "Action=Publish&Message=$input.params('Message')&TopicArn=$input.params('TopicArn')"
   }
 
   credentials = aws_iam_role.api_gateway_sns_role.arn
