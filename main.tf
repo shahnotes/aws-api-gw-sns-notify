@@ -79,3 +79,16 @@ resource "aws_iam_role_policy_attachment" "api_gateway_sns_attachment_sns" {
   policy_arn = aws_iam_policy.allow_lambda_sns.arn
   role       = aws_iam_role.api_gateway_sns_role.name
 }
+
+resource "aws_api_gateway_deployment" "sns_deployment" {
+  rest_api_id = aws_api_gateway_rest_api.sns_api.id
+  depends_on = [
+    aws_api_gateway_integration.sns_integration
+  ]
+}
+
+resource "aws_api_gateway_stage" "sandbox_stage" {
+  deployment_id = aws_api_gateway_deployment.sns_deployment.id
+  rest_api_id   = aws_api_gateway_rest_api.sns_api.id
+  stage_name    = "v1"
+}
